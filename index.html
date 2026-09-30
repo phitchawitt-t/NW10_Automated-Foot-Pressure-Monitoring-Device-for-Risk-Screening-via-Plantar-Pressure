@@ -1,0 +1,541 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f4f7f4">
+  <title>SoleCare | ระบบคัดกรองแรงกดฝ่าเท้า</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #1d302b;
+      --muted: #71817b;
+      --line: #e4eae5;
+      --paper: #ffffff;
+      --canvas: #f4f7f4;
+      --green: #187b5c;
+      --green-dark: #14563f;
+      --mint: #e5f4ed;
+      --yellow: #edb948;
+      --red: #d96151;
+      --blue: #5789a1;
+      --shadow: 0 12px 30px rgba(30, 59, 46, .055);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--canvas); color: var(--ink); font-family: "IBM Plex Sans Thai", sans-serif; font-size: 14px; }
+    button, input, select { font: inherit; }
+    button { cursor: pointer; }
+    .app { min-height: 100vh; display: grid; grid-template-columns: 238px minmax(0, 1fr); }
+    .sidebar { background: #fff; border-right: 1px solid var(--line); padding: 26px 16px 18px; display: flex; flex-direction: column; }
+    .brand { display: flex; align-items: center; gap: 11px; padding: 0 10px 27px; }
+    .brand-mark { width: 36px; height: 36px; border-radius: 11px; background: var(--green); color: white; display: grid; place-items: center; }
+    .brand-mark svg { width: 21px; height: 21px; }
+    .brand-name { font: 800 17px Manrope, sans-serif; letter-spacing: 0; }
+    .brand-sub { color: var(--muted); font-size: 10px; margin-top: -1px; }
+    .group-label { margin: 12px 11px 8px; font-size: 10px; font-weight: 600; letter-spacing: 0; color: #98a59f; }
+    .nav { display: grid; gap: 4px; }
+    .nav button { width: 100%; height: 40px; border: 0; border-radius: 6px; padding: 0 11px; background: transparent; color: #65756e; display: flex; align-items: center; gap: 11px; text-align: left; }
+    .nav button:hover { background: #f4f7f4; color: var(--ink); }
+    .nav button.active { background: var(--mint); color: var(--green-dark); font-weight: 600; }
+    .nav svg { width: 17px; height: 17px; flex: 0 0 auto; }
+    .nav-count { margin-left: auto; color: var(--green); font: 700 11px Manrope, sans-serif; }
+    .side-bottom { margin-top: auto; }
+    .device-mini { margin: 18px 2px 14px; padding: 13px 12px; background: #f6f9f6; border: 1px solid var(--line); border-radius: 7px; }
+    .device-mini-head { display: flex; justify-content: space-between; align-items: center; font-size: 12px; font-weight: 600; }
+    .online-dot { width: 7px; height: 7px; border-radius: 50%; background: #36a578; box-shadow: 0 0 0 3px #dff2e8; }
+    .device-mini p { color: var(--muted); margin: 5px 0 0; font-size: 11px; }
+    .profile { display: flex; gap: 10px; align-items: center; padding: 13px 8px 0; border-top: 1px solid var(--line); }
+    .avatar { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; color: #255944; background: #dceee4; font-weight: 600; }
+    .profile-name { font-size: 12px; font-weight: 600; }
+    .profile-role { font-size: 10px; color: var(--muted); }
+    main { min-width: 0; }
+    .topbar { height: 68px; background: rgba(255,255,255,.86); border-bottom: 1px solid var(--line); display: flex; align-items: center; justify-content: space-between; padding: 0 34px; gap: 20px; }
+    .crumb { color: var(--muted); font-size: 12px; }
+    .top-actions { display: flex; align-items: center; gap: 13px; }
+    .cloud-chip { display: flex; align-items: center; gap: 7px; color: var(--green-dark); border: 1px solid #d5e9dc; border-radius: 20px; padding: 6px 10px; font-size: 11px; background: #f7fbf8; }
+    .cloud-chip svg { width: 14px; height: 14px; }
+    .icon-btn { width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid var(--line); border-radius: 6px; color: #687870; background: white; position: relative; }
+    .icon-btn svg { width: 16px; height: 16px; }
+    .icon-btn .ping { width: 6px; height: 6px; border-radius: 50%; background: var(--red); position: absolute; top: 6px; right: 7px; border: 1px solid white; }
+    .content { max-width: 1500px; padding: 28px 34px 44px; margin: auto; }
+    .page-head { display: flex; justify-content: space-between; align-items: flex-end; gap: 20px; margin-bottom: 22px; }
+    .eyebrow { font: 700 10px Manrope, sans-serif; color: var(--green); text-transform: uppercase; letter-spacing: 0; }
+    h1 { font-size: 25px; line-height: 1.35; margin: 3px 0 4px; font-weight: 600; }
+    .page-desc { color: var(--muted); margin: 0; font-size: 12px; }
+    .head-actions { display: flex; gap: 8px; align-items: center; }
+    .btn { min-height: 36px; border: 1px solid var(--line); border-radius: 5px; background: white; color: #40524a; padding: 0 12px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 12px; font-weight: 500; }
+    .btn svg { width: 15px; height: 15px; }
+    .btn:hover { border-color: #b8cec0; background: #fbfdfb; }
+    .btn-primary { background: var(--green); border-color: var(--green); color: white; }
+    .btn-primary:hover { background: var(--green-dark); border-color: var(--green-dark); }
+    .grid-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 13px; margin-bottom: 16px; }
+    .stat { background: var(--paper); border: 1px solid var(--line); border-radius: 7px; padding: 15px 16px; min-height: 105px; }
+    .stat-top { display: flex; align-items: center; justify-content: space-between; color: var(--muted); font-size: 11px; }
+    .stat-icon { width: 28px; height: 28px; border-radius: 6px; display: grid; place-items: center; background: #edf5f0; color: var(--green); }
+    .stat-icon svg { width: 15px; height: 15px; }
+    .stat-value { font: 700 24px Manrope, sans-serif; margin-top: 7px; line-height: 1.2; }
+    .stat-note { color: var(--muted); font-size: 10px; margin-top: 3px; }
+    .stat-note strong { color: var(--green); font-weight: 600; }
+    .columns { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(280px, .85fr); gap: 15px; align-items: stretch; }
+    .panel { background: var(--paper); border: 1px solid var(--line); border-radius: 7px; min-width: 0; }
+    .panel-head { min-height: 57px; padding: 13px 17px; border-bottom: 1px solid #edf0ed; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+    .panel-title { font-size: 13px; font-weight: 600; margin: 0; }
+    .panel-sub { margin-top: 2px; color: var(--muted); font-size: 10px; }
+    .segmented { display: flex; background: #f1f5f2; padding: 3px; border-radius: 5px; gap: 2px; }
+    .segmented button { border: 0; background: transparent; color: #738078; font-size: 10px; padding: 5px 9px; border-radius: 4px; }
+    .segmented button.selected { background: white; color: var(--green-dark); box-shadow: 0 1px 3px #20352b16; font-weight: 600; }
+    .pressure-area { min-height: 296px; display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(155px, .75fr); }
+    .map-stage { min-height: 282px; display: flex; justify-content: center; align-items: center; gap: 24px; padding: 14px 12px 10px; background: radial-gradient(ellipse at center, #fafcf9 0, #fff 68%); }
+    .foot { width: min(32%, 108px); height: 224px; position: relative; filter: drop-shadow(0 5px 7px rgba(36, 87, 63, .12)); }
+    .foot svg { width: 100%; height: 100%; overflow: visible; }
+    .foot path { fill: url(#footFill); stroke: #a5c9b3; stroke-width: 1.2; }
+    .pressure-point { fill: #ef6651; opacity: .88; filter: url(#soft); }
+    .pressure-point.mid { fill: #f4b94e; }
+    .pressure-point.low { fill: #64bd83; }
+    .map-legend { border-left: 1px solid #edf0ed; padding: 21px 15px; display: flex; flex-direction: column; justify-content: center; }
+    .legend-title { font-size: 11px; font-weight: 600; margin-bottom: 12px; }
+    .gradient-bar { height: 8px; border-radius: 5px; background: linear-gradient(90deg, #65c47d 0%, #f0d05a 48%, #ee6d50 100%); margin-bottom: 5px; }
+    .legend-labels { display: flex; justify-content: space-between; color: var(--muted); font-size: 9px; }
+    .measure-info { margin-top: 19px; display: grid; gap: 10px; }
+    .measure-row { display: flex; justify-content: space-between; gap: 10px; font-size: 10px; }
+    .measure-row span { color: var(--muted); }
+    .measure-row strong { font: 600 11px Manrope, sans-serif; }
+    .map-foot { display: flex; justify-content: space-between; border-top: 1px solid #edf0ed; padding: 10px 17px; color: var(--muted); font-size: 9px; }
+    .right-stack { display: grid; gap: 15px; grid-template-rows: auto 1fr; }
+    .risk-body { padding: 15px 17px; }
+    .risk-banner { display: flex; align-items: flex-start; gap: 10px; padding: 11px; border-radius: 5px; background: #fff7e7; border: 1px solid #f3e4be; }
+    .risk-symbol { width: 24px; height: 24px; border-radius: 50%; flex: 0 0 auto; display: grid; place-items: center; color: #9d6b14; background: #f9e9bf; font-weight: 700; }
+    .risk-banner strong { font-size: 11px; display: block; }
+    .risk-banner p { font-size: 10px; color: #826b3e; margin: 2px 0 0; line-height: 1.55; }
+    .index-list { display: grid; gap: 12px; margin-top: 16px; }
+    .index-top { display: flex; align-items: baseline; justify-content: space-between; }
+    .index-name { font-size: 10px; color: #596a62; }
+    .index-value { font: 700 12px Manrope, sans-serif; }
+    .meter { height: 5px; background: #edf1ed; border-radius: 6px; margin-top: 5px; overflow: hidden; }
+    .meter i { display: block; height: 100%; border-radius: 6px; background: #4ca77a; }
+    .meter i.warn { background: var(--yellow); }
+    .device-body { padding: 12px 17px 14px; }
+    .device-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; }
+    .device-icon { width: 29px; height: 29px; border-radius: 6px; background: #f1f5f2; display: grid; place-items: center; color: #587266; }
+    .device-icon svg { width: 15px; height: 15px; }
+    .device-info { flex: 1; min-width: 0; }
+    .device-info strong { display: block; font-size: 10px; font-weight: 600; }
+    .device-info span { font-size: 9px; color: var(--muted); }
+    .state { color: var(--green); font-size: 9px; font-weight: 600; }
+    .table-panel { margin-top: 15px; }
+    .table-tools { display: flex; gap: 7px; align-items: center; }
+    .searchbox { height: 30px; display: flex; align-items: center; gap: 6px; border: 1px solid var(--line); border-radius: 5px; padding: 0 8px; color: #839089; }
+    .searchbox svg { width: 13px; height: 13px; }
+    .searchbox input { border: 0; outline: 0; width: 115px; background: transparent; color: var(--ink); font-size: 10px; }
+    .text-btn { border: 0; background: transparent; color: var(--green); font-size: 10px; font-weight: 600; padding: 7px; }
+    .table-wrap { overflow-x: auto; }
+    table { border-collapse: collapse; width: 100%; text-align: left; white-space: nowrap; }
+    th { color: #88958e; font-size: 9px; font-weight: 500; background: #fbfcfb; padding: 9px 15px; }
+    td { padding: 10px 15px; border-top: 1px solid #eff2ef; font-size: 10px; color: #45574e; }
+    .patient-cell { display: flex; align-items: center; gap: 8px; }
+    .patient-initial { width: 26px; height: 26px; border-radius: 50%; background: #e4f0e8; color: #34664f; display: grid; place-items: center; font-size: 9px; font-weight: 600; }
+    .patient-name { font-weight: 600; color: var(--ink); }
+    .patient-hn { color: var(--muted); font-size: 9px; margin-top: 1px; }
+    .badge { padding: 3px 7px; border-radius: 10px; font-size: 9px; font-weight: 600; }
+    .badge.low { color: #25734e; background: #e8f5ed; }
+    .badge.mid { color: #96671b; background: #fff4dc; }
+    .badge.high { color: #a34e42; background: #fff0ed; }
+    .row-more { border: 0; background: transparent; color: #87948d; font-size: 17px; line-height: 1; }
+    .footnote { color: #93a098; font-size: 9px; margin: 12px 1px 0; }
+    .view-panel { display: none; }
+    .view-panel.active { display: block; }
+    .view-panel.active.dashboard-view { display: block; }
+    [hidden] { display: none !important; }
+    .view-intro { margin-bottom: 16px; }
+    .simple-panel { background: white; border: 1px solid var(--line); border-radius: 7px; }
+    .empty-table-note { text-align: center; color: var(--muted); padding: 30px 15px; font-size: 11px; }
+    .setting-list { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: 14px; }
+    .setting-item { padding: 17px; border-bottom: 1px solid #edf0ed; display: flex; justify-content: space-between; gap: 16px; align-items: center; }
+    .setting-item:last-child { border-bottom: 0; }
+    .setting-item strong { display: block; font-size: 12px; }
+    .setting-item small { display: block; color: var(--muted); font-size: 10px; margin-top: 4px; }
+    .setting-value { color: var(--green-dark); font-size: 11px; font-weight: 600; white-space: nowrap; }
+    .device-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 13px; }
+    .device-card { padding: 17px; }
+    .device-card h3 { margin: 12px 0 4px; font-size: 13px; }
+    .device-card p { color: var(--muted); font-size: 10px; margin: 0 0 14px; }
+    .device-card .btn { width: 100%; }
+    .role-select { height: 33px; border: 1px solid var(--line); color: #46584f; background: white; border-radius: 5px; padding: 0 8px; font-size: 10px; }
+    .criteria-input { width: 76px; border: 1px solid var(--line); border-radius: 4px; padding: 5px 6px; color: var(--green-dark); font: 600 11px Manrope, sans-serif; }
+    @media (max-width: 1050px) {
+      .app { grid-template-columns: 205px minmax(0, 1fr); }
+      .content { padding: 24px 22px 35px; }
+      .topbar { padding: 0 22px; }
+      .grid-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .columns { grid-template-columns: minmax(0, 1.25fr) minmax(250px, .85fr); }
+      .pressure-area { grid-template-columns: minmax(0, 1fr) 150px; }
+    }
+    @media (max-width: 760px) {
+      .app { display: block; }
+      .sidebar { padding: 12px 14px 9px; border-right: 0; border-bottom: 1px solid var(--line); }
+      .brand { padding: 0 3px 10px; }
+      .group-label, .side-bottom { display: none; }
+      .nav { display: flex; overflow-x: auto; gap: 4px; scrollbar-width: none; }
+      .nav button { width: auto; flex: 0 0 auto; height: 34px; padding: 0 10px; font-size: 11px; }
+      .nav button svg { width: 15px; height: 15px; }
+      .topbar { height: 50px; padding: 0 16px; }
+      .content { padding: 21px 15px 32px; }
+      .page-head { align-items: flex-start; flex-direction: column; gap: 13px; }
+      .head-actions { width: 100%; }
+      .head-actions .btn-primary { margin-left: auto; }
+      .columns { grid-template-columns: 1fr; }
+      .right-stack { grid-template-columns: 1fr; grid-template-rows: auto auto; }
+      .pressure-area { grid-template-columns: minmax(0, 1fr) 145px; }
+      .device-grid { grid-template-columns: 1fr; }
+      .setting-list { grid-template-columns: 1fr; gap: 10px; }
+      .table-panel .panel-head { align-items: flex-start; }
+      .cloud-chip { font-size: 0; padding: 7px; }
+      .cloud-chip svg { width: 15px; height: 15px; }
+    }
+    @media (max-width: 430px) {
+      .grid-stats { gap: 8px; }
+      .stat { padding: 11px; min-height: 96px; }
+      .stat-value { font-size: 21px; }
+      .pressure-area { grid-template-columns: 1fr; }
+      .map-stage { min-height: 235px; }
+      .foot { height: 194px; }
+      .map-legend { border: 0; border-top: 1px solid #edf0ed; padding: 12px 17px; }
+      .measure-info { grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 11px; }
+      .measure-row { flex-direction: column; gap: 1px; }
+      .panel-head { padding-left: 12px; padding-right: 12px; }
+      .table-panel .panel-head { flex-direction: column; }
+      .searchbox { width: 100%; }
+      .searchbox input { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M7.2 21c-2.1 0-3.4-1.7-2.7-3.7l2.1-5.8c.5-1.4.8-2.9.8-4.4 0-2.2 1.1-3.7 2.8-3.7 1.8 0 2.5 1.5 2.7 3.2.2 1.7.8 2.4 2.1 3.3 2.4 1.7 4.3 3.7 4.3 6.6 0 2.5-1.9 4.5-4.5 4.5H7.2Z"/><path d="M7.7 15.7c2 .4 4.4.1 6.7-1.2"/></svg></div>
+        <div><div class="brand-name">SoleCare</div><div class="brand-sub">PLANTAR PRESSURE SYSTEM</div></div>
+      </div>
+      <div class="group-label">เมนูหลัก</div>
+      <nav class="nav" aria-label="เมนูหลัก">
+        <button class="active" data-view="overview"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="3" width="8" height="8" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="11" width="7" height="10" rx="1"/><rect x="3" y="14" width="8" height="7" rx="1"/></svg>ภาพรวม</button>
+        <button data-view="patients"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="9" cy="8" r="3.5"/><path d="M3 20v-1.4a5 5 0 0 1 5-5h2a5 5 0 0 1 5 5V20M16 5.5a3.5 3.5 0 0 1 0 6.8M18 14a4 4 0 0 1 3 3.9V20"/></svg>ผู้ป่วย</button>
+        <button data-view="reports"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 3h8l5 5v13H6z"/><path d="M14 3v5h5M9 13h7M9 17h7"/></svg>รายงานผล <span class="nav-count">24</span></button>
+        <button data-view="devices"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 7h8M8 11h2M14 11h2M8 15h2M14 15h2M9 21v-2m6 2v-2"/></svg>อุปกรณ์</button>
+        <div class="group-label">การตั้งค่า</div>
+        <button data-view="settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1 1.1 1.9-2 3.4-2.1-.6a8 8 0 0 1-2 .9l-.5 2.2h-4l-.5-2.2a8 8 0 0 1-2-.9l-2.1.6-2-3.4 1.1-1.9a8 8 0 0 1 0-2.2l-1.1-1.9 2-3.4 2.1.6a8 8 0 0 1 2-.9l.5-2.2h4l.5 2.2a8 8 0 0 1 2 .9l2.1-.6 2 3.4-1.1 1.9a8 8 0 0 1-.1 2.1Z" transform="translate(0 -1) scale(.88) translate(1.6 1.5)"/></svg>เกณฑ์คัดกรอง</button>
+      </nav>
+      <div class="side-bottom">
+        <div class="device-mini"><div class="device-mini-head"><span>สถานะเครื่องวัด</span><i class="online-dot"></i></div><p>ESP32 และ Raspberry Pi 5 พร้อมใช้งาน</p></div>
+        <div class="profile"><div class="avatar">พ</div><div><div class="profile-name">พิมพ์ชนก ใจดี</div><div class="profile-role">พยาบาลคัดกรอง</div></div></div>
+      </div>
+    </aside>
+    <main>
+      <header class="topbar">
+        <div class="crumb">คลินิกเวชกรรมฟื้นฟู <span aria-hidden="true">/</span> <span id="crumb-current">ภาพรวม</span></div>
+        <div class="top-actions">
+          <div class="cloud-chip" title="ข้อมูลตัวอย่าง ยังไม่ได้เชื่อมต่อคลาวด์จริง"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M6.5 18.5h11a4 4 0 0 0 .5-8 6 6 0 0 0-11.6-1.2A4.6 4.6 0 0 0 6.5 18.5Z"/><path d="m9 14 2 2 4-4"/></svg>Cloud Demo</div>
+          <button class="icon-btn" aria-label="การแจ้งเตือน" title="การแจ้งเตือน"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4"/></svg><i class="ping"></i></button>
+          <select class="role-select" id="role-select" aria-label="เลือกบทบาทสำหรับโหมดสาธิต" title="สลับ role ตัวอย่างเพื่อทดสอบสิทธิ์ ไม่ใช่ระบบเข้าสู่ระบบ"><option>พยาบาล</option><option>แพทย์</option><option>ผู้ป่วย</option><option>ผู้ดูแลระบบ</option></select>
+        </div>
+      </header>
+      <div class="content">
+        <section class="view-panel active dashboard-view" id="view-overview">
+          <div class="page-head">
+            <div><div class="eyebrow">WEDNESDAY, 30 SEPTEMBER 2026</div><h1>ศูนย์คัดกรองสุขภาพเท้า</h1><p class="page-desc">ภาพรวมการตรวจแรงกดฝ่าเท้าและสถานะการให้บริการวันนี้</p></div>
+            <div class="head-actions"><button class="btn" id="print-report"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v7H6z"/></svg>พิมพ์รายงาน</button><button class="btn btn-primary" id="new-measure"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>เริ่มตรวจใหม่</button></div>
+          </div>
+          <div class="grid-stats">
+            <article class="stat"><div class="stat-top"><span>ตรวจวันนี้</span><span class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M8 3v4m8-4v4M4 9h16M5 5h14a1 1 0 0 1 1 1v14H4V6a1 1 0 0 1 1-1Z"/><path d="m8 15 2.5 2.5L16 12"/></svg></span></div><div class="stat-value">24</div><div class="stat-note"><strong>+6 ราย</strong> จากค่าเฉลี่ยรายวัน</div></article>
+            <article class="stat"><div class="stat-top"><span>ควรติดตาม</span><span class="stat-icon" style="background:#fff4e0;color:#a47727"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="m12 3 10 18H2L12 3Z"/><path d="M12 9v5m0 3h.01"/></svg></span></div><div class="stat-value">3</div><div class="stat-note">ระดับความเสี่ยงปานกลางขึ้นไป</div></article>
+            <article class="stat"><div class="stat-top"><span>เวลาเฉลี่ยต่อการตรวจ</span><span class="stat-icon" style="background:#eef3f5;color:#5789a1"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></span></div><div class="stat-value">2:18</div><div class="stat-note">นาที <strong>·</strong> ตั้งแต่เริ่มวัดจนได้ผล</div></article>
+            <article class="stat"><div class="stat-top"><span>อุปกรณ์พร้อมใช้</span><span class="stat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="m8 12 2.5 2.5L16 9"/></svg></span></div><div class="stat-value">2<span style="font-size:15px;color:#829088"> / 2</span></div><div class="stat-note"><strong>ออนไลน์</strong> ซิงก์ข้อมูลล่าสุด 10:42</div></article>
+          </div>
+          <div class="columns">
+            <section class="panel">
+              <div class="panel-head"><div><h2 class="panel-title">แผนที่การกระจายแรงกด</h2><div class="panel-sub">ผู้ป่วยล่าสุด · HN 6409281 · 10:36 น.</div></div><div class="segmented" role="group" aria-label="โหมดการวัด"><button class="selected" data-mode="ยืนนิ่ง">ยืนนิ่ง</button><button data-mode="ก้าวเดิน">ก้าวเดิน</button></div></div>
+              <div class="pressure-area">
+                <div class="map-stage" aria-label="ตัวอย่างแผนที่แรงกดฝ่าเท้าซ้ายและขวา">
+                  <svg width="0" height="0" aria-hidden="true"><defs><linearGradient id="footFill" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#8bd18d"/><stop offset=".55" stop-color="#f3d866"/><stop offset="1" stop-color="#ed7051"/></linearGradient><filter id="soft"><feGaussianBlur stdDeviation="2.6"/></filter></defs></svg>
+                  <div class="foot"><svg viewBox="0 0 100 230" aria-hidden="true"><path d="M47 226c-13 0-21-8-20-20 1-13 7-26 8-42 2-21-5-40-10-59C18 83 8 62 6 43 3 22 12 6 25 6c10 0 15 7 17 19 2-17 8-24 17-23 10 1 13 10 12 26 3-13 9-18 17-15 9 4 8 15 5 29 5-8 11-10 17-6 9 6 3 23-2 37-7 20-11 41-11 64 0 25 6 42 4 58-1 8-7 12-16 12H47Z"/><ellipse class="pressure-point" cx="25" cy="38" rx="12" ry="15"/><ellipse class="pressure-point mid" cx="45" cy="50" rx="13" ry="16"/><ellipse class="pressure-point" cx="70" cy="45" rx="10" ry="13"/><ellipse class="pressure-point mid" cx="51" cy="92" rx="14" ry="25"/><ellipse class="pressure-point low" cx="48" cy="141" rx="14" ry="23"/><ellipse class="pressure-point mid" cx="46" cy="191" rx="18" ry="25"/></svg></div>
+                  <div class="foot"><svg viewBox="0 0 100 230" aria-hidden="true"><path d="M47 226c-13 0-21-8-20-20 1-13 7-26 8-42 2-21-5-40-10-59C18 83 8 62 6 43 3 22 12 6 25 6c10 0 15 7 17 19 2-17 8-24 17-23 10 1 13 10 12 26 3-13 9-18 17-15 9 4 8 15 5 29 5-8 11-10 17-6 9 6 3 23-2 37-7 20-11 41-11 64 0 25 6 42 4 58-1 8-7 12-16 12H47Z"/><ellipse class="pressure-point mid" cx="25" cy="38" rx="12" ry="14"/><ellipse class="pressure-point" cx="46" cy="49" rx="13" ry="16"/><ellipse class="pressure-point mid" cx="70" cy="43" rx="10" ry="13"/><ellipse class="pressure-point low" cx="51" cy="94" rx="14" ry="24"/><ellipse class="pressure-point low" cx="48" cy="141" rx="14" ry="23"/><ellipse class="pressure-point mid" cx="46" cy="190" rx="18" ry="25"/></svg></div>
+                </div>
+                <div class="map-legend"><div class="legend-title">ระดับแรงกด</div><div class="gradient-bar"></div><div class="legend-labels"><span>ต่ำ</span><span>สูง</span></div><div class="measure-info"><div class="measure-row"><span>ซ้าย / ขวา</span><strong>52 / 48%</strong></div><div class="measure-row"><span>Arch Index</span><strong>0.24</strong></div><div class="measure-row"><span>โหมดตรวจ</span><strong id="mode-label">ยืนนิ่ง</strong></div></div></div>
+              </div>
+              <div class="map-foot"><span>ซ้าย <span style="color:#c7d0ca">·</span> ขวา</span><span>ข้อมูลตัวอย่างเพื่อแสดงรูปแบบผลตรวจ</span></div>
+            </section>
+            <div class="right-stack">
+              <section class="panel"><div class="panel-head"><div><h2 class="panel-title">สรุปผลการคัดกรอง</h2><div class="panel-sub">HN 6409281 · ตรวจล่าสุดวันนี้</div></div><button class="text-btn" data-goto="reports">ดูรายงาน</button></div><div class="risk-body"><div class="risk-banner"><div class="risk-symbol">!</div><div><strong>ความเสี่ยงระดับปานกลาง</strong><p>พบแรงกดบริเวณหน้าเท้าสูงกว่าค่าอ้างอิง แนะนำให้แพทย์ประเมินเพิ่มเติม</p></div></div><div class="index-list"><div><div class="index-top"><span class="index-name">สมดุลการลงน้ำหนัก</span><span class="index-value">52 : 48</span></div><div class="meter"><i style="width:52%"></i></div></div><div><div class="index-top"><span class="index-name">Arch Index</span><span class="index-value">0.24 <span style="font-size:9px;color:#a47727">ปานกลาง</span></span></div><div class="meter"><i class="warn" style="width:62%"></i></div></div><div><div class="index-top"><span class="index-name">COP Trajectory</span><span class="index-value">สมมาตร</span></div><div class="meter"><i style="width:81%"></i></div></div></div></div></section>
+              <section class="panel"><div class="panel-head"><div><h2 class="panel-title">สถานะอุปกรณ์</h2><div class="panel-sub">จุดตรวจหลัก · ห้องกายภาพ 1</div></div><button class="text-btn" data-goto="devices">รายละเอียด</button></div><div class="device-body"><div class="device-row"><div class="device-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 9h10M7 13h10M7 16h4"/></svg></div><div class="device-info"><strong>แผ่นวัดแรงกด · PF-02</strong><span>สอบเทียบ 28 ก.ย. 2026</span></div><span class="state">พร้อมใช้</span></div><div class="device-row"><div class="device-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="5" y="4" width="14" height="16" rx="2"/><path d="M9 8h6m-6 4h6m-6 4h3"/></svg></div><div class="device-info"><strong>หน่วยประมวลผล · ESP32</strong><span>เชื่อมต่อ Raspberry Pi 5</span></div><span class="state">ออนไลน์</span></div></div></section>
+            </div>
+          </div>
+          <section class="panel table-panel"><div class="panel-head"><div><h2 class="panel-title">ผลตรวจล่าสุด</h2><div class="panel-sub">รายการตรวจล่าสุดจากทุกโหมด</div></div><div class="table-tools"><label class="searchbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg><input id="patient-search" type="search" placeholder="ค้นหาด้วย HN" aria-label="ค้นหาด้วย HN"></label><button class="text-btn" data-goto="reports">ดูทั้งหมด</button></div></div><div class="table-wrap"><table><thead><tr><th>ผู้ป่วย</th><th>วันที่ / เวลา</th><th>โหมดตรวจ</th><th>สมดุล ซ้าย : ขวา</th><th>ความเสี่ยง</th><th>ผู้ตรวจ</th><th></th></tr></thead><tbody id="patient-rows">
+            <tr data-hn="6409281"><td><div class="patient-cell"><div class="patient-initial">สก</div><div><div class="patient-name">สมชาย ใจมั่น</div><div class="patient-hn">HN 6409281</div></div></div></td><td>30 ก.ย. 2026 · 10:36</td><td>ยืนนิ่ง</td><td>52 : 48%</td><td><span class="badge mid">ปานกลาง</span></td><td>พ.ญ. นลินี</td><td><button class="row-more" aria-label="ดูรายละเอียด">···</button></td></tr>
+            <tr data-hn="6409274"><td><div class="patient-cell"><div class="patient-initial" style="background:#edf0f5;color:#5d6d89">พว</div><div><div class="patient-name">พิมพ์วดี วัฒนา</div><div class="patient-hn">HN 6409274</div></div></div></td><td>30 ก.ย. 2026 · 10:12</td><td>ก้าวเดิน</td><td>49 : 51%</td><td><span class="badge low">ความเสี่ยงต่ำ</span></td><td>พ.ญ. นลินี</td><td><button class="row-more" aria-label="ดูรายละเอียด">···</button></td></tr>
+            <tr data-hn="6409262"><td><div class="patient-cell"><div class="patient-initial" style="background:#f4e9e4;color:#a46450">ธช</div><div><div class="patient-name">ธนโชติ ชูศรี</div><div class="patient-hn">HN 6409262</div></div></div></td><td>30 ก.ย. 2026 · 09:48</td><td>ยืนนิ่ง</td><td>61 : 39%</td><td><span class="badge high">ควรติดตาม</span></td><td>พ.ญ. นลินี</td><td><button class="row-more" aria-label="ดูรายละเอียด">···</button></td></tr>
+          </tbody></table><div id="no-results" class="empty-table-note" hidden>ไม่พบข้อมูล HN ที่ค้นหา</div></div></section>
+          <p class="footnote">หน้าจอสาธิต · รายชื่อ ค่าตรวจ และสถานะอุปกรณ์เป็นข้อมูลสมมติ ระบบยังไม่เชื่อมต่อฐานข้อมูลคลาวด์หรือเครื่องวัดจริง</p>
+        </section>
+
+        <section class="view-panel" id="view-patients"><div class="page-head"><div><div class="eyebrow">PATIENT DIRECTORY</div><h1>ทะเบียนผู้ป่วย</h1><p class="page-desc">ค้นหาและเข้าถึงประวัติการตรวจด้วยรหัส HN</p></div><button class="btn btn-primary" id="patient-add"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 5v14M5 12h14"/></svg>ลงทะเบียนผู้ป่วย</button></div><div class="simple-panel"><div class="panel-head"><div><h2 class="panel-title">ผู้ป่วยที่ตรวจล่าสุด</h2><div class="panel-sub">ค้นหาผู้ป่วยเพื่อดูรายงานและประวัติย้อนหลัง</div></div><label class="searchbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg><input class="view-search" type="search" placeholder="ค้นหาด้วย HN" aria-label="ค้นหาผู้ป่วยด้วย HN"></label></div><div class="table-wrap"><table><thead><tr><th>ผู้ป่วย</th><th>การตรวจล่าสุด</th><th>จำนวนครั้ง</th><th>ความเสี่ยงล่าสุด</th><th>แพทย์เจ้าของไข้</th><th></th></tr></thead><tbody><tr><td><div class="patient-cell"><div class="patient-initial">สก</div><div><div class="patient-name">สมชาย ใจมั่น</div><div class="patient-hn">HN 6409281</div></div></div></td><td>30 ก.ย. 2026</td><td>8 ครั้ง</td><td><span class="badge mid">ปานกลาง</span></td><td>พ.ญ. นลินี</td><td><button class="text-btn" data-goto="reports">ประวัติ</button></td></tr><tr><td><div class="patient-cell"><div class="patient-initial" style="background:#edf0f5;color:#5d6d89">พว</div><div><div class="patient-name">พิมพ์วดี วัฒนา</div><div class="patient-hn">HN 6409274</div></div></div></td><td>30 ก.ย. 2026</td><td>3 ครั้ง</td><td><span class="badge low">ความเสี่ยงต่ำ</span></td><td>พ.ญ. นลินี</td><td><button class="text-btn" data-goto="reports">ประวัติ</button></td></tr><tr><td><div class="patient-cell"><div class="patient-initial" style="background:#f4e9e4;color:#a46450">ธช</div><div><div class="patient-name">ธนโชติ ชูศรี</div><div class="patient-hn">HN 6409262</div></div></div></td><td>30 ก.ย. 2026</td><td>5 ครั้ง</td><td><span class="badge high">ควรติดตาม</span></td><td>พ.ญ. นลินี</td><td><button class="text-btn" data-goto="reports">ประวัติ</button></td></tr></tbody></table></div></div><p class="footnote">ข้อมูลผู้ป่วยทั้งหมดในหน้านี้เป็นข้อมูลตัวอย่าง</p></section>
+
+        <section class="view-panel" id="view-reports"><div class="page-head"><div><div class="eyebrow">SCREENING REPORTS</div><h1>รายงานผลตรวจ</h1><p class="page-desc">ผลแรงกดฝ่าเท้า ตัวชี้วัด และประวัติเปรียบเทียบ</p></div><div class="head-actions"><button class="btn" id="report-print"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><path d="M6 14h12v7H6z"/></svg>พิมพ์รายงาน</button></div></div><div class="simple-panel"><div class="panel-head"><div><h2 class="panel-title">ผลตรวจตามวันที่</h2><div class="panel-sub">แสดงข้อมูล Pressure Map, COP Trajectory, Arch Index และสมดุลซ้าย-ขวา</div></div><label class="searchbox"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="7"/><path d="m16 16 4 4"/></svg><input class="view-search" type="search" placeholder="ค้นหาด้วย HN" aria-label="ค้นหารายงานด้วย HN"></label></div><div class="table-wrap"><table><thead><tr><th>รหัส HN</th><th>วันที่ตรวจ</th><th>โหมดวัด</th><th>COP Trajectory</th><th>Arch Index</th><th>สมดุล ซ้าย : ขวา</th><th>ความเสี่ยง</th><th>การวินิจฉัย</th></tr></thead><tbody><tr><td>6409281</td><td>30 ก.ย. 2026 · 10:36</td><td>ยืนนิ่ง</td><td>สมมาตร</td><td>0.24</td><td>52 : 48%</td><td><span class="badge mid">ปานกลาง</span></td><td><button class="text-btn">รอแพทย์ยืนยัน</button></td></tr><tr><td>6409274</td><td>30 ก.ย. 2026 · 10:12</td><td>ก้าวเดิน</td><td>สมมาตร</td><td>0.19</td><td>49 : 51%</td><td><span class="badge low">ความเสี่ยงต่ำ</span></td><td><button class="text-btn">ดูความเห็น</button></td></tr><tr><td>6409262</td><td>30 ก.ย. 2026 · 09:48</td><td>ยืนนิ่ง</td><td>เบี่ยงขวา</td><td>0.31</td><td>61 : 39%</td><td><span class="badge high">ควรติดตาม</span></td><td><button class="text-btn">รอแพทย์ยืนยัน</button></td></tr></tbody></table></div></div><div class="simple-panel" style="margin-top:14px"><div class="panel-head"><div><h2 class="panel-title">การติดตามผลระยะยาว</h2><div class="panel-sub">เปรียบเทียบประวัติผลตรวจของผู้ป่วยรายเดิมจากฐานข้อมูล</div></div></div><div class="empty-table-note">เลือกผู้ป่วยจากทะเบียนเพื่อดูแนวโน้มและบันทึกความเห็นแพทย์</div></div><p class="footnote">ตัวอย่างรายงานประกอบการออกแบบ · ค่าต่าง ๆ ไม่ใช่ผลทางการแพทย์จริง</p></section>
+
+        <section class="view-panel" id="view-devices"><div class="page-head"><div><div class="eyebrow">HARDWARE MONITORING</div><h1>อุปกรณ์และการสอบเทียบ</h1><p class="page-desc">ตรวจสอบการทำงานของเซนเซอร์ ESP32 และ Raspberry Pi 5</p></div><button class="btn" id="calibrate"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M4 20h16M6 16l4-4 3 2 5-7M16 7h2v2"/></svg>สอบเทียบเซนเซอร์</button></div><div class="device-grid"><article class="simple-panel device-card"><div class="device-row"><div class="device-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M7 9h10M7 13h10M7 16h4"/></svg></div><span class="state">ออนไลน์</span></div><h3>แผ่นวัดแรงกด PF-02</h3><p>เซนเซอร์แรงกด · ห้องกายภาพ 1</p><button class="btn" data-calibration>ตรวจสอบการสอบเทียบ</button></article><article class="simple-panel device-card"><div class="device-row"><div class="device-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="5" y="4" width="14" height="16" rx="2"/><path d="M9 8h6m-6 4h6m-6 4h3"/></svg></div><span class="state">ออนไลน์</span></div><h3>ESP32 Controller</h3><p>ส่งข้อมูลจากเซนเซอร์ · ซิงก์ล่าสุด 10:42</p><button class="btn" data-device-status>ตรวจสอบสถานะ</button></article><article class="simple-panel device-card"><div class="device-row"><div class="device-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8m-4-4v4"/></svg></div><span class="state">ออนไลน์</span></div><h3>Raspberry Pi 5</h3><p>ประมวลผลและเชื่อมต่อฐานข้อมูลคลาวด์</p><button class="btn" data-device-status>ตรวจสอบสถานะ</button></article></div><div class="simple-panel" style="margin-top:15px"><div class="panel-head"><div><h2 class="panel-title">ประวัติการสอบเทียบ</h2><div class="panel-sub">มาตรฐานการวัดเซนเซอร์</div></div></div><div class="setting-item"><div><strong>PF-02 · ห้องกายภาพ 1</strong><small>สอบเทียบล่าสุด 28 ก.ย. 2026 โดยผู้ดูแลระบบ</small></div><span class="setting-value">ผ่านเกณฑ์</span></div></div><p class="footnote">สถานะอุปกรณ์เป็นข้อมูลจำลอง ยังไม่มีการเชื่อมต่อฮาร์ดแวร์</p></section>
+
+        <section class="view-panel" id="view-settings"><div class="page-head"><div><div class="eyebrow">RISK CONFIGURATION</div><h1>เกณฑ์คัดกรองความเสี่ยง</h1><p class="page-desc">ผู้ดูแลระบบสามารถปรับเกณฑ์ผ่านฐานข้อมูลโดยไม่แก้ไขโปรแกรม</p></div><button class="btn btn-primary" id="save-settings"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M5 3h12l4 4v14H3V3h2Z"/><path d="M7 3v6h10V3M7 21v-7h10v7"/></svg>บันทึกเกณฑ์</button></div><div class="simple-panel setting-list"><div class="setting-item"><div><strong>Arch Index · ความเสี่ยงต่ำ</strong><small>ค่าอ้างอิงสำหรับการคัดกรองเบื้องต้น</small></div><span class="setting-value">น้อยกว่า 0.21</span></div><div class="setting-item"><div><strong>Arch Index · ความเสี่ยงปานกลาง</strong><small>แจ้งเตือนเพื่อให้แพทย์ประเมินเพิ่มเติม</small></div><span class="setting-value">0.21 – 0.28</span></div><div class="setting-item"><div><strong>Arch Index · ควรติดตาม</strong><small>พิจารณานัดตรวจและติดตามผล</small></div><span class="setting-value">มากกว่า 0.28</span></div><div class="setting-item"><div><strong>ความไม่สมดุลซ้าย-ขวา</strong><small>เกณฑ์แจ้งเตือนความแตกต่างของแรงกด</small></div><span class="setting-value">มากกว่า 10%</span></div><div class="setting-item"><div><strong>แหล่งจัดเก็บเกณฑ์</strong><small>ปรับปรุงค่าผ่านฐานข้อมูล ไม่ต้องแก้โปรแกรม</small></div><span class="setting-value">Cloud Database</span></div><div class="setting-item"><div><strong>สิทธิ์ผู้ดูแลระบบ</strong><small>สอบเทียบอุปกรณ์และจัดการการตั้งค่า</small></div><span class="setting-value">ผู้ดูแลระบบ</span></div></div><p class="footnote">ค่าเกณฑ์ในหน้านี้เป็นตัวอย่างเพื่อแสดงแนวทางเท่านั้น ไม่ใช่แนวทางวินิจฉัยทางการแพทย์</p></section>
+      </div>
+    </main>
+  </div>
+  <script>
+    const viewNames = { overview: 'ภาพรวม', patients: 'ผู้ป่วย', reports: 'รายงานผล', devices: 'อุปกรณ์', settings: 'เกณฑ์คัดกรอง' };
+    const roleConfig = {
+      nurse: { label: 'พยาบาล', title: 'พยาบาลคัดกรอง', name: 'พิมพ์ชนก ใจดี', views: ['overview', 'patients', 'reports'], home: 'overview' },
+      doctor: { label: 'แพทย์', title: 'แพทย์เจ้าของไข้', name: 'นลินี', views: ['overview', 'patients', 'reports'], home: 'reports' },
+      patient: { label: 'ผู้ป่วย', title: 'ผู้เข้ารับการตรวจ', name: 'สมชาย ใจมั่น', views: ['reports'], home: 'reports' },
+      admin: { label: 'ผู้ดูแลระบบ', title: 'ผู้ดูแลระบบ', name: 'ผู้ดูแลระบบ', views: ['devices', 'settings'], home: 'devices' }
+    };
+    const roleSelect = document.getElementById('role-select');
+    const roleKeys = ['nurse', 'doctor', 'patient', 'admin'];
+    roleSelect.querySelectorAll('option').forEach((option, index) => { option.value = roleKeys[index]; });
+    let currentRole = 'nurse';
+
+    async function api(path, options = {}) {
+      const response = await fetch(path, {
+        ...options,
+        headers: { 'Content-Type': 'application/json', 'X-Demo-Role': currentRole, ...options.headers }
+      });
+      const result = await response.json();
+      if (!response.ok) throw new Error(result.error || 'ไม่สามารถติดต่อ server ได้');
+      return result;
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '').replace(/[&<>"']/g, character => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[character]));
+    }
+
+    function riskClass(risk) {
+      if (risk === 'ความเสี่ยงต่ำ') return 'low';
+      if (risk === 'ควรติดตาม') return 'high';
+      return 'mid';
+    }
+
+    function formatDate(value) {
+      return new Date(value).toLocaleString('th-TH', { dateStyle: 'short', timeStyle: 'short' });
+    }
+
+    function applyRoleAccess() {
+      const config = roleConfig[currentRole];
+      document.querySelector('.profile-name').textContent = config.name;
+      document.querySelector('.profile-role').textContent = config.title;
+      document.querySelector('.avatar').textContent = config.name.slice(0, 1);
+      roleSelect.value = currentRole;
+      document.querySelectorAll('.nav button[data-view]').forEach(button => {
+        button.hidden = !config.views.includes(button.dataset.view);
+      });
+      document.querySelectorAll('[data-goto]').forEach(button => {
+        button.hidden = !config.views.includes(button.dataset.goto);
+      });
+      document.querySelector('.nav .group-label').hidden = !config.views.includes('settings');
+      document.querySelector('#print-report').hidden = currentRole !== 'nurse';
+      document.querySelector('#new-measure').hidden = currentRole !== 'nurse';
+      document.querySelector('#patient-add').hidden = currentRole !== 'nurse';
+      document.querySelector('#report-print').hidden = currentRole === 'admin';
+      document.querySelector('#view-overview').hidden = !config.views.includes('overview');
+      document.querySelector('#view-patients').hidden = !config.views.includes('patients');
+      document.querySelector('#view-reports').hidden = !config.views.includes('reports');
+      document.querySelector('#view-devices').hidden = !config.views.includes('devices');
+      document.querySelector('#view-settings').hidden = !config.views.includes('settings');
+    }
+
+    async function showView(name) {
+      if (!roleConfig[currentRole].views.includes(name)) return;
+      document.querySelectorAll('.view-panel').forEach(panel => {
+        panel.classList.toggle('active', panel.id === `view-${name}`);
+      });
+      document.querySelectorAll('.nav button[data-view]').forEach(button => {
+        button.classList.toggle('active', button.dataset.view === name);
+      });
+      document.getElementById('crumb-current').textContent = viewNames[name] || 'ภาพรวม';
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      await loadView(name);
+    }
+
+    function renderReportRows(items, patientsByHn, target) {
+      target.innerHTML = items.map(report => {
+        const patient = patientsByHn[report.hn] || { name: 'ผู้ป่วย', hn: report.hn };
+        const date = formatDate(report.date);
+        if (target.id === 'patient-rows') {
+          return `<tr data-hn="${escapeHtml(report.hn)}"><td><div class="patient-cell"><div class="patient-initial">${escapeHtml(patient.name.slice(0, 2))}</div><div><div class="patient-name">${escapeHtml(patient.name)}</div><div class="patient-hn">HN ${escapeHtml(report.hn)}</div></div></div></td><td>${escapeHtml(date)}</td><td>${escapeHtml(report.mode)}</td><td>${escapeHtml(report.leftRight)}</td><td><span class="badge ${riskClass(report.risk)}">${escapeHtml(report.risk)}</span></td><td>${escapeHtml(report.examiner)}</td><td></td></tr>`;
+        }
+        const diagnosis = report.note ? escapeHtml(report.note) : currentRole === 'doctor'
+          ? `<button class="text-btn" data-diagnose="${escapeHtml(report.id)}">บันทึกความเห็น</button>`
+          : 'รอแพทย์ยืนยัน';
+        return `<tr><td>${escapeHtml(report.hn)}</td><td>${escapeHtml(date)}</td><td>${escapeHtml(report.mode)}</td><td>${escapeHtml(report.copTrajectory)}</td><td>${escapeHtml(report.archIndex)}</td><td>${escapeHtml(report.leftRight)}</td><td><span class="badge ${riskClass(report.risk)}">${escapeHtml(report.risk)}</span></td><td>${diagnosis}</td></tr>`;
+      }).join('');
+    }
+
+    async function loadReports() {
+      const [{ reports: items }, { patients: patientList }] = await Promise.all([
+        api('/api/reports'),
+        currentRole === 'patient' ? Promise.resolve({ patients: [] }) : api('/api/patients')
+      ]);
+      window.reportCache = items;
+      document.querySelector('.nav-count').textContent = items.length;
+      const patientsByHn = Object.fromEntries(patientList.map(patient => [patient.hn, patient]));
+      if (currentRole === 'patient') patientsByHn['6409281'] = { name: 'สมชาย ใจมั่น', hn: '6409281' };
+      renderReportRows(items, patientsByHn, document.getElementById('patient-rows'));
+      renderReportRows(items, patientsByHn, document.querySelector('#view-reports tbody'));
+    }
+
+    async function loadPatients() {
+      const { patients: items } = await api('/api/patients');
+      const rows = document.querySelector('#view-patients tbody');
+      rows.innerHTML = items.map(patient => {
+        const latest = reportsDateForPatient(patient.hn);
+        const report = latest?.risk ? `<span class="badge ${riskClass(latest.risk)}">${escapeHtml(latest.risk)}</span>` : 'ยังไม่มีผลตรวจ';
+        return `<tr><td><div class="patient-cell"><div class="patient-initial">${escapeHtml(patient.name.slice(0, 2))}</div><div><div class="patient-name">${escapeHtml(patient.name)}</div><div class="patient-hn">HN ${escapeHtml(patient.hn)}</div></div></div></td><td>${latest ? escapeHtml(formatDate(latest.date)) : '-'}</td><td>${escapeHtml(patient.checkCount)} ครั้ง</td><td>${report}</td><td>${escapeHtml(patient.provider)}</td><td><button class="text-btn" data-patient-hn="${escapeHtml(patient.hn)}">ประวัติ</button></td></tr>`;
+      }).join('');
+    }
+
+    function reportsDateForPatient(hn) {
+      return window.reportCache?.find(report => report.hn === hn);
+    }
+
+    async function loadDashboard() {
+      const data = await api('/api/dashboard');
+      const values = document.querySelectorAll('#view-overview .stat-value');
+      values[0].textContent = data.examinedToday;
+      values[1].textContent = data.followUp;
+      values[2].textContent = data.averageDuration;
+      values[3].innerHTML = `${data.devicesReady}<span style="font-size:15px;color:#829088"> / ${data.devicesTotal}</span>`;
+      await loadReports();
+    }
+
+    async function loadDevices() {
+      const { devices } = await api('/api/devices');
+      const container = document.querySelector('#view-devices .device-grid');
+      container.innerHTML = devices.map(device => `<article class="simple-panel device-card"><div class="device-row"><div class="device-icon">${escapeHtml(device.type)}</div><span class="state">${device.status === 'online' ? 'ออนไลน์' : 'ออฟไลน์'}</span></div><h3>${escapeHtml(device.name)}</h3><p>${escapeHtml(device.room)}${device.lastCalibration ? ` · สอบเทียบ ${escapeHtml(formatDate(device.lastCalibration))}` : ''}</p>${device.type === 'pressure-plate' ? `<button class="btn" data-calibrate-device="${escapeHtml(device.id)}">สอบเทียบเซนเซอร์</button>` : '<button class="btn" disabled>อุปกรณ์สถานะออนไลน์</button>'}</article>`).join('');
+    }
+
+    async function loadCriteria() {
+      const { criteria } = await api('/api/risk-criteria');
+      const values = document.querySelectorAll('#view-settings .setting-value');
+      values[0].innerHTML = `<input class="criteria-input" type="number" min="0.01" step="0.01" data-criterion="archIndexLowMax" value="${escapeHtml(criteria.archIndexLowMax)}" aria-label="เกณฑ์ Arch Index ความเสี่ยงต่ำ">`;
+      values[1].innerHTML = `<input class="criteria-input" type="number" min="0.02" step="0.01" data-criterion="archIndexMediumMax" value="${escapeHtml(criteria.archIndexMediumMax)}" aria-label="เกณฑ์ Arch Index ความเสี่ยงปานกลาง">`;
+      values[2].textContent = `มากกว่า ${criteria.archIndexMediumMax}`;
+      values[3].innerHTML = `<input class="criteria-input" type="number" min="0" max="100" step="1" data-criterion="asymmetryPercent" value="${escapeHtml(criteria.asymmetryPercent)}" aria-label="เกณฑ์ความไม่สมดุลซ้ายขวา"> %`;
+    }
+
+    async function loadView(name) {
+      try {
+        if (name === 'overview') await loadDashboard();
+        if (name === 'patients') {
+          await loadReports();
+          await loadPatients();
+        }
+        if (name === 'reports') await loadReports();
+        if (name === 'devices') await loadDevices();
+        if (name === 'settings') await loadCriteria();
+      } catch (error) {
+        window.alert(error.message);
+      }
+    }
+
+    async function switchRole(role) {
+      currentRole = role;
+      try {
+        const { user } = await api('/api/session');
+        const config = roleConfig[user.role];
+        config.name = user.name;
+        applyRoleAccess();
+        await showView(config.home);
+      } catch (error) {
+        window.alert(error.message);
+      }
+    }
+
+    document.querySelectorAll('.nav button[data-view]').forEach(button => button.addEventListener('click', () => showView(button.dataset.view)));
+    document.querySelectorAll('[data-goto]').forEach(button => button.addEventListener('click', () => showView(button.dataset.goto)));
+    roleSelect.addEventListener('change', () => switchRole(roleSelect.value));
+    document.querySelectorAll('.segmented button').forEach(button => button.addEventListener('click', () => {
+      document.querySelectorAll('.segmented button').forEach(item => item.classList.toggle('selected', item === button));
+      document.getElementById('mode-label').textContent = button.dataset.mode;
+    }));
+    document.getElementById('patient-search').addEventListener('input', event => {
+      const query = event.target.value.trim().toLowerCase();
+      let visible = 0;
+      document.querySelectorAll('#patient-rows tr').forEach(row => {
+        const match = row.dataset.hn.includes(query);
+        row.hidden = !match;
+        if (match) visible++;
+      });
+      document.getElementById('no-results').hidden = visible > 0;
+    });
+    document.querySelectorAll('.view-search').forEach(input => input.addEventListener('input', () => {
+      const query = input.value.trim().toLowerCase();
+      input.closest('.simple-panel').querySelectorAll('tbody tr').forEach(row => { row.hidden = !row.textContent.toLowerCase().includes(query); });
+    }));
+    document.getElementById('print-report').addEventListener('click', () => window.print());
+    document.getElementById('report-print').addEventListener('click', () => window.print());
+    document.getElementById('patient-add').addEventListener('click', async () => {
+      const hn = window.prompt('รหัส HN');
+      if (!hn) return;
+      const name = window.prompt('ชื่อผู้ป่วย');
+      if (!name) return;
+      try {
+        await api('/api/patients', { method: 'POST', body: JSON.stringify({ hn, name }) });
+        await loadPatients();
+      } catch (error) { window.alert(error.message); }
+    });
+    document.getElementById('new-measure').addEventListener('click', async () => {
+      const hn = window.prompt('รหัส HN ของผู้ป่วย');
+      if (!hn) return;
+      const selectedMode = document.querySelector('.segmented button.selected')?.dataset.mode;
+      const mode = selectedMode === 'ก้าวเดิน' ? 'walking' : 'standing';
+      try {
+        const result = await api('/api/measurements', { method: 'POST', body: JSON.stringify({ hn, mode }) });
+        window.alert(`${result.message} รหัสงาน: ${result.measurement.id}`);
+      } catch (error) { window.alert(error.message); }
+    });
+    document.getElementById('calibrate').addEventListener('click', () => document.querySelector('[data-calibrate-device]')?.click());
+    document.addEventListener('click', async event => {
+      const calibrateButton = event.target.closest('[data-calibrate-device]');
+      if (calibrateButton) {
+        try {
+          const result = await api(`/api/devices/${encodeURIComponent(calibrateButton.dataset.calibrateDevice)}/calibration`, { method: 'POST', body: '{}' });
+          window.alert(result.message);
+          await loadDevices();
+        } catch (error) { window.alert(error.message); }
+      }
+      const diagnoseButton = event.target.closest('[data-diagnose]');
+      if (diagnoseButton) {
+        const note = window.prompt('บันทึกความเห็นและผลการวินิจฉัย');
+        if (!note) return;
+        try {
+          await api(`/api/reports/${encodeURIComponent(diagnoseButton.dataset.diagnose)}/diagnosis`, { method: 'POST', body: JSON.stringify({ note }) });
+          await loadReports();
+        } catch (error) { window.alert(error.message); }
+      }
+      const patientButton = event.target.closest('[data-patient-hn]');
+      if (patientButton) {
+        showView('reports');
+        const search = document.querySelector('#view-reports .view-search');
+        search.value = patientButton.dataset.patientHn;
+        search.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+    });
+    document.getElementById('save-settings').addEventListener('click', async () => {
+      const criteria = Object.fromEntries([...document.querySelectorAll('[data-criterion]')].map(input => [input.dataset.criterion, Number(input.value)]));
+      try {
+        const result = await api('/api/risk-criteria', { method: 'PUT', body: JSON.stringify(criteria) });
+        window.alert(`บันทึกเกณฑ์แล้ว: Arch Index ต่ำกว่า ${result.criteria.archIndexLowMax} และปานกลางไม่เกิน ${result.criteria.archIndexMediumMax}`);
+      } catch (error) { window.alert(error.message); }
+    });
+    switchRole(currentRole);
+  </script>
+</body>
+</html>
